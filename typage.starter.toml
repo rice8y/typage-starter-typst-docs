@@ -1,0 +1,22 @@
+name = "typst-docs"
+description = "A docs.rs-like Typst package documentation starter for Typage."
+min_typage = "0.1.5"
+
+[files]
+root = "template"
+exclude = [".typage", "public"]
+
+[plugins.typst_docs]
+package = "typage-plugin-typst-docs"
+version = "0.1.1"
+git = "https://github.com/rice8y/typage-plugin-typst-docs"
+watch = ["package/**/*.typ", "package/typst.toml"]
+outputs = ["content/api"]
+
+[plugins.typst_docs.config]
+source_dir = "package"
+out_dir = "content/api"
+template = "typst-docs.typ"
+api_root_url = "/api/"
+emit_default_assets = false
+cleanup_generated = true

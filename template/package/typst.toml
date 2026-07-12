@@ -1,0 +1,8 @@
+[package]
+name = "typst-docs-starter"
+version = "0.1.0"
+entrypoint = "src/lib.typ"
+authors = ["Typage"]
+license = "MIT"
+description = "A sample Typst package for typage-starter-typst-docs."
+repository = "https://github.com/your-name/typst-docs-starter"

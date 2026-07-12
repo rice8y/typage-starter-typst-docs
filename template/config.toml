@@ -1,0 +1,47 @@
+title = "Typst Package Docs"
+base_url = ""
+lang = "en"
+typst = "typst"
+content_dir = "content"
+templates_dir = "templates"
+static_dir = "static"
+out_dir = "public"
+cache_dir = ".typage"
+default_template = "base.typ"
+list_template = "list.typ"
+features = "html"
+bundle_features = "bundle,html"
+build_pdf = false
+build_future = false
+build_expired = false
+fail_on_broken_links = true
+paginate_by = 24
+feed = false
+atom_feed = false
+sitemap = false
+robots = false
+jobs = 0
+taxonomies = []
+
+[search]
+enabled = true
+mode = "auto"
+ngram = 2
+include_body = false
+include_headings = true
+include_tags = true
+include_taxonomies = true
+compact = true
+max_tokens = 2048
+max_body_chars = 20000
+max_heading_chars = 240
+
+[extra]
+description = "Docs.rs-style documentation for a Typst package."
+
+[scripts]
+build = "build"
+dev = "serve --live-reload"
+preview = "serve"
+check = "doctor"
+clean = "clean"

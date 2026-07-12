@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Typst package docs">
+  <rect width="64" height="64" rx="12" fill="#102033"/>
+  <path d="M16 18h32v7H35v25h-7V25H16z" fill="#7dd3c7"/>
+  <path d="M40 34h9v16h-9z" fill="#f2b84b"/>
+</svg>
