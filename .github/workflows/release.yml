@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Typage
+        run: cargo install typage --version 0.1.5 --locked
+
+      - name: Smoke test starter
+        env:
+          CARGO_INSTALL_ROOT: ${{ runner.temp }}/plugin-install
+        run: |
+          typage init "$RUNNER_TEMP/typage-starter-check" --starter "$GITHUB_WORKSPACE" --install-plugins
+          test -f "$RUNNER_TEMP/typage-starter-check/config.toml"
+          test -f "$RUNNER_TEMP/typage-starter-check/typage.plugins.toml"
+          test -d "$RUNNER_TEMP/typage-starter-check/templates"
+          test -x "$CARGO_INSTALL_ROOT/bin/typage-plugin-typst-docs"
+          test ! -e "$RUNNER_TEMP/typage-starter-check/.typage"
+          test ! -e "$RUNNER_TEMP/typage-starter-check/public"
+
+      - name: Create distribution folder
+        run: |
+          mkdir -p dist/typage-starter-typst-docs
+          cp README.md LICENSE .gitignore typage.starter.toml dist/typage-starter-typst-docs/
+          cp -R template dist/typage-starter-typst-docs/template
+          rm -rf dist/typage-starter-typst-docs/template/.typage
+          rm -rf dist/typage-starter-typst-docs/template/public
+
+      - name: Compress dist
+        run: cd dist && zip -r ../typage-starter-typst-docs-${{ github.ref_name }}.zip typage-starter-typst-docs
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: typage-starter-typst-docs-${{ github.ref_name }}.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
