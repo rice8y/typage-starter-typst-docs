@@ -181,8 +181,10 @@
 
 #let api-symbols(pages) = pages.filter(item => item.at("api_kind", default: none) == "symbol")
 
+#let public-modules(modules) = modules.filter(module => module.at("symbol_count", default: 0) > 0)
+
 #let api-modules(symbols) = if symbols.len() > 0 {
-  symbols.first().at("api_modules", default: ())
+  public-modules(symbols.first().at("api_modules", default: ()))
 } else {
   ()
 }
@@ -190,7 +192,7 @@
 #let module-list(modules, current: none, site: (:)) = {
   let href = path => asset(site, path)
   html.elem("nav", attrs: (class: "module-list", aria-label: "Modules"))[
-    #for module in modules {
+    #for module in public-modules(modules) {
       let is-current = current != none and module.name == current
       html.elem("a", attrs: (
         href: href(module.url),
