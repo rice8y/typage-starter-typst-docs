@@ -34,7 +34,7 @@ typage build
 typage dev
 ```
 
-The starter uses `typage-plugin-typst-docs` 0.1.2 from its GitHub repository. `--install-plugins` builds the plugin with Cargo and writes its registration to `typage.plugins.toml` in the generated project.
+The starter uses `typage-plugin-typst-docs` 0.1.3 from its GitHub repository. `--install-plugins` builds and installs the plugin with Cargo and writes its registration to `typage.plugins.toml` in the generated project.
 
 ## Layout
 

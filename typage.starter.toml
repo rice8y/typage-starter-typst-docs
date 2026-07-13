@@ -7,8 +7,9 @@ root = "template"
 exclude = [".typage", "public"]
 
 [plugins.typst_docs]
+source = "git"
 package = "typage-plugin-typst-docs"
-version = "0.1.2"
+version = "0.1.3"
 git = "https://github.com/rice8y/typage-plugin-typst-docs"
 watch = ["package/**/*.typ", "package/typst.toml"]
 outputs = ["content/api"]
