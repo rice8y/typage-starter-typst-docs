@@ -24,6 +24,7 @@
 #let render(site: (:), page: (:), pages: (), taxonomies: (:), body) = context {
   let symbol-title = if page.api_symbol == none { page.api_module } else { page.api_symbol }
   let symbol-kind = if page.api_symbol_kind == none { "module" } else { page.api_symbol_kind }
+  let return-type = page.at("api_return_type", default: none)
 
   if target() == "html" {
     html.elem("html", attrs: (lang: page.lang))[
@@ -59,6 +60,7 @@
           #overview((
             (label: "Documentation", href: "#documentation"),
             if page.api_params.len() > 0 { (label: "Parameters", href: "#parameters") } else { none },
+            if return-type != none { (label: "Returns", href: "#returns") } else { none },
             (label: "Source", href: "#source"),
           ).filter(item => item != none))
         ]

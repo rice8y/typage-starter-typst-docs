@@ -8,7 +8,7 @@ exclude = [".typage", "public"]
 
 [plugins.typst_docs]
 package = "typage-plugin-typst-docs"
-version = "0.1.1"
+version = "0.1.2"
 git = "https://github.com/rice8y/typage-plugin-typst-docs"
 watch = ["package/**/*.typ", "package/typst.toml"]
 outputs = ["content/api"]

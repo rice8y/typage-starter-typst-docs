@@ -1,7 +1,7 @@
-//! Public entrypoint for the sample package.
-//!
-//! The docs plugin reads top-level module comments, public `#let` bindings,
-//! and simple re-exports from this file.
+/// Public entrypoint for the sample package.
+///
+/// The docs plugin reads top-level module comments, public `#let` bindings,
+/// and simple re-exports from this file.
 
 /// Layout helpers re-exported from `layout.typ`.
 #import "layout.typ": card, stack
@@ -10,14 +10,16 @@
 #import "theme.typ": palette, brand-color
 
 /// Current package version.
+/// -> str
 #let version = "0.1.0"
 
 /// Draw a compact status badge.
 ///
 /// The badge is useful for labels such as experimental, stable, or deprecated.
 ///
-/// - `text`: Text displayed inside the badge.
+/// - text (content): Text displayed inside the badge.
 /// - tone (str): Visual tone. Use `"info"` or `"warn"`.
+/// -> content
 #let badge(text, tone: "info") = box(
   inset: (x: 0.42em, y: 0.14em),
   radius: 3pt,
@@ -27,9 +29,10 @@
 
 /// Render a note block with a title.
 ///
-/// - `title`: Short heading displayed above the note body.
-/// - `body`: Content rendered inside the note.
+/// - title (content): Short heading displayed above the note body.
+/// - body (content): Content rendered inside the note.
 /// - tone (str): Visual tone. Use `"info"` or `"warn"`.
+/// -> content
 #let note(title, body, tone: "info") = block(
   inset: 10pt,
   radius: 4pt,

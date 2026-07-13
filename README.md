@@ -34,7 +34,7 @@ typage build
 typage dev
 ```
 
-The starter uses `typage-plugin-typst-docs` 0.1.1 from its GitHub repository. `--install-plugins` builds the plugin with Cargo and writes its registration to `typage.plugins.toml` in the generated project.
+The starter uses `typage-plugin-typst-docs` 0.1.2 from its GitHub repository. `--install-plugins` builds the plugin with Cargo and writes its registration to `typage.plugins.toml` in the generated project.
 
 ## Layout
 
@@ -61,13 +61,16 @@ The starter uses `typage-plugin-typst-docs` 0.1.1 from its GitHub repository. `-
 
 The plugin generates `content/api/**` during `typage build`. Those files are marked as generated and should not be edited by hand. The starter-owned `content/index.typ` and `content/api.typ` are intentionally generic; package name, version, description, license, repository, entrypoint, module lists, and symbol lists are read from `package/typst.toml` and generated metadata.
 
-Document parameters with the common Typst package comment style. Both backticked names and optional type annotations are supported, and continuation lines keep their indentation:
+Documentation comments follow the [Tinymist docstring convention](https://myriad-dreamin.github.io/tinymist/feature/docs.html). Use a leading standalone `///` block for module documentation and place a symbol's `///` block immediately before its binding. Parameter annotations use `- name (type): description`, return types use `-> type`, and comment bodies are Typst markup. A blank source line or regular comment ends the current doc-comment block.
 
 ```typst
+/// Components for package status displays.
+
 /// Render a badge.
 ///
-/// - `text`: Text displayed inside the badge.
+/// - text (content): Text displayed inside the badge.
 /// - tone (str): Visual tone. Use `"info"` or `"warn"`.
+/// -> content
 #let badge(text, tone: "info") = [...]
 ```
 
