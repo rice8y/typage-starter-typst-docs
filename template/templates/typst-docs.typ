@@ -1,6 +1,26 @@
 #import "chrome.typ": breadcrumbs, code-block, docs-sidebar, footer, head, header, kind-pill, overview
 
-#let _source-meta(page) = html.elem("dl", attrs: (class: "source-meta"))[
+#let _source-url(page) = {
+  if page.api_source_url != none {
+    return page.api_source_url
+  }
+  if page.api_repository == none or page.api_source_path == none or page.api_source_line == none {
+    return none
+  }
+  if not page.api_repository.starts-with("https://github.com/") {
+    return none
+  }
+  let repository = page.api_repository
+  if repository.ends-with("/") {
+    repository = repository.slice(0, repository.len() - 1)
+  }
+  if repository.ends-with(".git") {
+    repository = repository.slice(0, repository.len() - 4)
+  }
+  repository + "/blob/main/package/" + page.api_source_path + "#L" + str(page.api_source_line)
+}
+
+#let _source-meta(page, source-url) = html.elem("dl", attrs: (class: "source-meta"))[
   #html.elem("div")[
     #html.elem("dt")[Module]
     #html.elem("dd")[#page.api_module]
@@ -11,11 +31,11 @@
       #html.elem("dd")[#(page.api_source_path + ":" + str(page.api_source_line))]
     ]
   }
-  #if page.api_source_url != none {
+  #if source-url != none {
     html.elem("div")[
       #html.elem("dt")[Source]
       #html.elem("dd")[
-        #html.elem("a", attrs: (href: page.api_source_url))[View source]
+        #html.elem("a", attrs: (href: source-url))[View source]
       ]
     ]
   }
@@ -25,6 +45,7 @@
   let symbol-title = if page.api_symbol == none { page.api_module } else { page.api_symbol }
   let symbol-kind = if page.api_symbol_kind == none { "module" } else { page.api_symbol_kind }
   let return-type = page.at("api_return_type", default: none)
+  let source-url = _source-url(page)
 
   if target() == "html" {
     html.elem("html", attrs: (lang: page.lang))[
@@ -54,7 +75,7 @@
             ]
             #html.elem("section", attrs: (class: "docs-section source-section", id: "source"))[
               #html.elem("h2")[Source]
-              #_source-meta(page)
+              #_source-meta(page, source-url)
             ]
           ]
           #overview((
