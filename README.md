@@ -76,7 +76,7 @@ Documentation comments follow the [Tinymist docstring convention](https://myriad
 
 ## Use your package
 
-Replace `package/typst.toml` and `package/**/*.typ` with the package sources to document. To link generated API pages back to the source repository, add this to `typage.plugins.toml`:
+Replace `package/typst.toml` and `package/**/*.typ` with the package sources to document. For GitHub repositories, generated API pages link to `main/package/{path}` by default using the `repository` field in `package/typst.toml`. If the package source uses another branch or repository layout, override the URL in `typage.plugins.toml`:
 
 ```toml
 [plugins.typst_docs.config]
