@@ -1,4 +1,4 @@
-#import "chrome.typ": breadcrumbs, code-block, docs-sidebar, footer, head, header, kind-pill, overview
+#import "chrome.typ": breadcrumbs, code-block, docs-sidebar, footer, head, header, kind-label, overview
 
 #let _source-url(page) = {
   if page.api_source_url != none {
@@ -60,17 +60,33 @@
               (label: page.api_module, url: page.api_modules.filter(module => module.name == page.api_module).first().url),
             ))
             #html.elem("header", attrs: (class: "page-title docs-header"))[
-              #html.elem("p", attrs: (class: "eyebrow"))[#(page.api_module + " module")]
-              #html.elem("h1")[
-                #symbol-title
-                #kind-pill(symbol-kind)
-              ]
+              #html.elem("p", attrs: (class: "eyebrow"))[#kind-label(symbol-kind)]
+              #html.elem("h1")[#symbol-title]
               #if page.api_signature != none {
-                code-block(site, page.api_signature)
+                let collapsible = page.api_signature.split("\n").len() > 12
+                html.elem("div", attrs: (
+                  class: if collapsible { "declaration is-collapsible" } else { "declaration" },
+                  data-declaration: "",
+                ))[
+                  #html.elem("p", attrs: (class: "declaration-label"))[Declaration]
+                  #html.elem("div", attrs: (id: "declaration-code"))[
+                    #code-block(site, page.api_signature)
+                  ]
+                  #if collapsible {
+                    html.elem("button", attrs: (
+                      class: "declaration-toggle",
+                      type: "button",
+                      aria-expanded: "false",
+                      aria-controls: "declaration-code",
+                      data-declaration-toggle: "",
+                      hidden: "hidden",
+                    ))[Show full declaration]
+                  }
+                ]
               }
             ]
             #html.elem("section", attrs: (class: "docs-section docs-article prose", id: "documentation"))[
-              #html.elem("h2")[Documentation]
+              #html.elem("h2")[Overview]
               #body
             ]
             #html.elem("section", attrs: (class: "docs-section source-section", id: "source"))[
@@ -79,7 +95,7 @@
             ]
           ]
           #overview((
-            (label: "Documentation", href: "#documentation"),
+            (label: "Overview", href: "#documentation"),
             if page.api_params.len() > 0 { (label: "Parameters", href: "#parameters") } else { none },
             if return-type != none { (label: "Returns", href: "#returns") } else { none },
             (label: "Source", href: "#source"),

@@ -1,4 +1,4 @@
-#import "chrome.typ": api-modules, api-symbols, asset, breadcrumbs, code-block, docs-sidebar, footer, head, header, overview, package-description, package-entrypoint, package-license, package-name, package-repository, package-version, source-link, symbol-table
+#import "chrome.typ": api-modules, api-symbols, asset, breadcrumbs, code-block, docs-sidebar, footer, head, header, overview, package-authors, package-description, package-entrypoint, package-license, package-name, package-repository, package-version, source-link, symbol-table
 
 #let _fact(label, value) = if value != none {
   html.elem("div", attrs: (class: "fact"))[
@@ -25,6 +25,7 @@
   let modules = api-modules(symbols)
   let title = package-name()
   let description = package-description()
+  let authors = package-authors()
 
   if target() == "html" {
     html.elem("html", attrs: (lang: page.lang))[
@@ -34,19 +35,13 @@
         #html.elem("main", attrs: (id: "main-content", class: "main-grid package-page"))[
           #docs-sidebar(site, modules)
           #html.elem("article", attrs: (class: "docs-main package-main"))[
-            #breadcrumbs(site, ((label: "API", url: "/api/"),))
             #html.elem("header", attrs: (class: "page-title package-hero"))[
-              #html.elem("p", attrs: (class: "eyebrow"))[Package]
-              #html.elem("h1")[
-                #title
-                #if package-version() != none {
-                  html.elem("span", attrs: (class: "pill pill--version"))[#package-version()]
-                }
-              ]
+              #html.elem("p", attrs: (class: "eyebrow"))[Typst package]
+              #html.elem("h1")[#title]
               #html.elem("p", attrs: (class: "lead"))[#description]
               #html.elem("div", attrs: (class: "page-actions"))[
                 #if modules.len() > 0 {
-                  html.elem("a", attrs: (class: "nav-button nav-button--primary", href: href(modules.first().url)))[Open entrypoint]
+                  html.elem("a", attrs: (class: "nav-button nav-button--primary", href: href(modules.first().url)))[API reference]
                 }
                 #source-link(package-repository())
               ]
@@ -54,17 +49,6 @@
             #html.elem("section", attrs: (class: "docs-section", id: "install"))[
               #html.elem("h2")[Import]
               #code-block(site, _install-snippet())
-            ]
-            #html.elem("section", attrs: (class: "docs-section", id: "package-metadata"))[
-              #html.elem("h2")[Package metadata]
-              #html.elem("dl", attrs: (class: "facts"))[
-                #_fact("Version", package-version())
-                #_fact("License", package-license())
-                #_fact("Entrypoint", package-entrypoint())
-                #_fact("Modules", str(modules.len()))
-                #_fact("Public items", str(symbols.len()))
-                #_fact("Repository", source-link(package-repository()))
-              ]
             ]
             #html.elem("section", attrs: (class: "docs-section", id: "modules"))[
               #html.elem("h2")[
@@ -82,7 +66,7 @@
                         #if module.at("is_entrypoint", default: false) {
                           html.elem("span", attrs: (class: "module-link__badge"))[entrypoint]
                         }
-                        #(str(module.symbol_count) + " public items")
+                        #html.elem("span")[#(str(module.symbol_count) + " symbols")]
                       ]
                       #html.elem("span", attrs: (class: "module-card__arrow", aria-hidden: "true"))[→]
                     ]
@@ -98,15 +82,27 @@
               #if symbols.len() == 0 {
                 html.elem("p", attrs: (class: "empty-state"))[No public symbols were found. Add documented top-level `#let` bindings to the Typst package.]
               } else {
-                symbol-table(symbols, site: site)
+                symbol-table(symbols, site: site, show-module: modules.len() > 1)
               }
+            ]
+            #html.elem("section", attrs: (class: "docs-section", id: "package-metadata"))[
+              #html.elem("h2")[Package information]
+              #html.elem("dl", attrs: (class: "facts"))[
+                #_fact("Version", package-version())
+                #_fact(if authors.len() == 1 { "Author" } else { "Authors" }, if authors.len() > 0 {
+                  html.elem("span", attrs: (class: "package-authors"))[#authors.join(", ")]
+                } else { none })
+                #_fact("License", package-license())
+                #_fact("Entrypoint", package-entrypoint())
+                #_fact("Repository", source-link(package-repository(), label: package-repository()))
+              ]
             ]
           ]
           #overview((
             (label: "Import", href: "#install"),
-            (label: "Package metadata", href: "#package-metadata"),
             (label: "Modules", href: "#modules"),
             (label: "Public API", href: "#public-api"),
+            (label: "Package information", href: "#package-metadata"),
           ))
         ]
         #footer(site)
