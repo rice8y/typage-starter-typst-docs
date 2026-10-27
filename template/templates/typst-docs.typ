@@ -1,4 +1,4 @@
-#import "chrome.typ": breadcrumbs, code-block, docs-sidebar, footer, head, header, kind-pill, overview
+#import "chrome.typ": breadcrumbs, code-block, docs-sidebar, footer, head, header, kind-label, overview
 
 #let _source-url(page) = {
   if page.api_source_url != none {
@@ -60,17 +60,14 @@
               (label: page.api_module, url: page.api_modules.filter(module => module.name == page.api_module).first().url),
             ))
             #html.elem("header", attrs: (class: "page-title docs-header"))[
-              #html.elem("p", attrs: (class: "eyebrow"))[#(page.api_module + " module")]
-              #html.elem("h1")[
-                #symbol-title
-                #kind-pill(symbol-kind)
-              ]
+              #html.elem("p", attrs: (class: "eyebrow"))[#kind-label(symbol-kind)]
+              #html.elem("h1")[#symbol-title]
               #if page.api_signature != none {
                 code-block(site, page.api_signature)
               }
             ]
             #html.elem("section", attrs: (class: "docs-section docs-article prose", id: "documentation"))[
-              #html.elem("h2")[Documentation]
+              #html.elem("h2")[Overview]
               #body
             ]
             #html.elem("section", attrs: (class: "docs-section source-section", id: "source"))[
@@ -79,7 +76,7 @@
             ]
           ]
           #overview((
-            (label: "Documentation", href: "#documentation"),
+            (label: "Overview", href: "#documentation"),
             if page.api_params.len() > 0 { (label: "Parameters", href: "#parameters") } else { none },
             if return-type != none { (label: "Returns", href: "#returns") } else { none },
             (label: "Source", href: "#source"),

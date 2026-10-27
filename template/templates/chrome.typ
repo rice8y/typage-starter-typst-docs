@@ -37,7 +37,7 @@
     #html.elem("meta", attrs: (name: "viewport", content: "width=device-width, initial-scale=1"))
     #html.elem("meta", attrs: (name: "generator", content: generator))
     #html.elem("meta", attrs: (name: "typage-base-url", content: site.base_url))
-    #html.elem("meta", attrs: (name: "theme-color", content: "#fbfcfd"))
+    #html.elem("meta", attrs: (name: "theme-color", content: "#ffffff"))
     #if description != none {
       html.elem("meta", attrs: (name: "description", content: description))
     }
@@ -121,21 +121,19 @@
 
 #let footer(site) = html.elem("footer", attrs: (class: "site-footer"))[
   #html.elem("div", attrs: (class: "site-footer__inner"))[
-    #html.elem("p", attrs: (class: "site-footer__package"))[
-      #package-name()
-      #if package-version() != none { " " + package-version() }
-    ]
-    #html.elem("p")[Documentation generated with Typage and Typst HTML export.]
+    #html.elem("a", attrs: (href: "https://github.com/rice8y/typage"))[Built with Typage]
   ]
 ]
 
 #let breadcrumbs(site, items) = {
   let href = path => asset(site, path)
   html.elem("nav", attrs: (class: "breadcrumbs", aria-label: "Breadcrumbs"))[
-    #html.elem("a", attrs: (class: "breadcrumbs__root", href: href("/api/")))[Docs]
+    #html.elem("a", attrs: (class: "breadcrumbs__root", href: href("/api/")))[#package-name()]
     #for item in items {
-      html.elem("span", attrs: (class: "breadcrumbs__sep", aria-hidden: "true"))[/]
-      html.elem("a", attrs: (href: href(item.url)))[#item.label]
+      if item.url != "/api/" {
+        html.elem("span", attrs: (class: "breadcrumbs__sep", aria-hidden: "true"))[›]
+        html.elem("a", attrs: (href: href(item.url)))[#item.label]
+      }
     }
   ]
 }
@@ -291,10 +289,7 @@
 )[
   #html.elem("div", attrs: (class: "sidebar-heading"))[
     #html.elem("div", attrs: (class: "sidebar-identity"))[
-      #html.elem("a", attrs: (class: "sidebar-package", href: asset(site, "/api/")))[#package-name()]
-      #if package-version() != none {
-        html.elem("span", attrs: (class: "sidebar-version"))[#package-version()]
-      }
+      #html.elem("span", attrs: (class: "sidebar-title"))[Documentation]
     ]
     #html.elem("button", attrs: (
       class: "sidebar-close",
@@ -307,21 +302,26 @@
     ]
   ]
   #search-box(site)
+  #html.elem("a", attrs: (
+    class: if current == none { "sidebar-overview is-current" } else { "sidebar-overview" },
+    href: asset(site, "/api/"),
+    ..if current == none { (aria-current: "page",) } else { (:) },
+  ))[Overview]
   #html.elem("p", attrs: (class: "sidebar-category"))[Modules]
   #module-list(modules, current: current, site: site)
   #if symbols.len() > 0 {
-    html.elem("p", attrs: (class: "sidebar-category sidebar-category--symbols"))[Current module]
+    html.elem("p", attrs: (class: "sidebar-category sidebar-category--symbols"))[Symbols]
     html.elem("nav", attrs: (class: "symbol-nav", aria-label: "Symbols in module"))[
-      #for symbol in symbols {
+      #for symbol in symbols.sorted(key: symbol => symbol-name(symbol)) {
         let name = symbol-name(symbol)
         let kind = symbol-kind(symbol)
         let is-current = current-symbol != none and current-symbol == name
         html.elem("a", attrs: (
           href: asset(site, symbol.url),
+          title: kind-label(kind) + " " + name,
           class: if is-current { "is-current" } else { "" },
           ..if is-current { (aria-current: "page",) } else { (:) },
         ))[
-          #kind-pill(kind)
           #html.elem("span")[#name]
         ]
       }

@@ -74,12 +74,22 @@
                   #(if is-paginated { "Module page " + str(page-number) + " of " + str(total-pages) } else { "Module" })
                 ]
                 #html.elem("h1")[#current-module.name]
-                #if page.description != none {
-                  html.elem("p", attrs: (class: "lead"))[#page.description]
+                #html.elem("p", attrs: (class: "module-path"))[#current-module.path]
+              ]
+              #html.elem("section", attrs: (class: "docs-section", id: "public-symbols"))[
+                #html.elem("h2")[
+                  #(if is-paginated { "Public symbols - page " + str(page-number) } else { "Public symbols" })
+                  #html.elem("span", attrs: (class: "section-count"))[#str(module-symbols.len())]
+                ]
+                #if module-symbols.len() == 0 {
+                  html.elem("p", attrs: (class: "empty-state"))[No public symbols were found in this module.]
+                } else {
+                  symbol-table(module-symbols, site: site, show-module: false)
                 }
+                #pagination(site, page)
               ]
               #html.elem("section", attrs: (class: "docs-section", id: "module-metadata"))[
-                #html.elem("h2")[Module metadata]
+                #html.elem("h2")[Module information]
                 #html.elem("dl", attrs: (class: "facts"))[
                   #html.elem("div", attrs: (class: "fact"))[
                     #html.elem("dt")[Path]
@@ -97,22 +107,10 @@
                   }
                 ]
               ]
-              #html.elem("section", attrs: (class: "docs-section", id: "public-symbols"))[
-                #html.elem("h2")[
-                  #(if is-paginated { "Public symbols - page " + str(page-number) } else { "Public symbols" })
-                  #html.elem("span", attrs: (class: "section-count"))[#str(module-symbols.len())]
-                ]
-                #if module-symbols.len() == 0 {
-                  html.elem("p", attrs: (class: "empty-state"))[No public symbols were found in this module.]
-                } else {
-                  symbol-table(module-symbols, site: site, show-module: false)
-                }
-                #pagination(site, page)
-              ]
             ]
             #overview((
-              (label: "Module metadata", href: "#module-metadata"),
               (label: "Public symbols", href: "#public-symbols"),
+              (label: "Module information", href: "#module-metadata"),
             ))
           ]
         } else {
