@@ -234,7 +234,7 @@
 }
 
 #let code-block(site, source, lang: "typst") = html.elem("div", attrs: (class: "code-block", data-code-block: ""))[
-  #html.elem("pre", attrs: (class: "code-definition"))[
+  #html.elem("pre", attrs: (class: "code-definition", tabindex: "0", aria-label: "Code"))[
     #if lang == none {
       html.elem("code")[#source]
     } else {
@@ -250,7 +250,7 @@
   ))[
     #icon(site, "copy", class: "copy-button__icon copy-button__icon--copy", size: 15)
     #icon(site, "check", class: "copy-button__icon copy-button__icon--check", size: 15)
-    #html.elem("span", attrs: (data-copy-label: ""))[Copy]
+    #html.elem("span", attrs: (class: "visually-hidden", aria-live: "polite", data-copy-label: ""))[Copy]
   ]
 ]
 

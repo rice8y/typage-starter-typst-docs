@@ -319,6 +319,7 @@
   }
 
   function fallbackCopy(text) {
+    const previousFocus = document.activeElement;
     const textarea = document.createElement("textarea");
     textarea.value = text;
     textarea.setAttribute("readonly", "");
@@ -339,6 +340,7 @@
       return document.execCommand("copy");
     } finally {
       textarea.remove();
+      if (previousFocus instanceof HTMLElement) previousFocus.focus({ preventScroll: true });
     }
   }
 
@@ -365,6 +367,8 @@
     );
 
     const label = document.createElement("span");
+    label.className = "visually-hidden";
+    label.setAttribute("aria-live", "polite");
     label.dataset.copyLabel = "";
     label.textContent = "Copy";
     button.append(label);
@@ -381,6 +385,8 @@
       block.dataset.codeBlock = "";
       pre.replaceWith(block);
       pre.classList.add("code-definition");
+      pre.tabIndex = 0;
+      pre.setAttribute("aria-label", "Code");
       block.append(pre, createCopyButton());
     });
   }
@@ -410,10 +416,12 @@
           if (!copied) throw new Error("Copy failed");
           button.dataset.state = "copied";
           button.setAttribute("aria-label", "Copied");
+          button.title = "Copied";
           button.querySelector("[data-copy-label]").textContent = "Copied";
         } catch (_error) {
           button.dataset.state = "error";
           button.setAttribute("aria-label", "Copy failed");
+          button.title = "Copy failed. Try again.";
           button.querySelector("[data-copy-label]").textContent = "Failed";
         }
 
@@ -421,10 +429,30 @@
         resetTimer = window.setTimeout(() => {
           delete button.dataset.state;
           button.setAttribute("aria-label", "Copy code");
+          button.title = "Copy code";
           button.querySelector("[data-copy-label]").textContent = "Copy";
         }, 1800);
       });
     });
+  }
+
+  function setupDeclarations() {
+    document.querySelectorAll("[data-declaration]").forEach((declaration) => {
+      const toggle = declaration.querySelector("[data-declaration-toggle]");
+      if (!toggle) return;
+      toggle.hidden = false;
+      toggle.addEventListener("click", () => {
+        const expanded = declaration.classList.toggle("is-expanded");
+        toggle.setAttribute("aria-expanded", String(expanded));
+        toggle.textContent = expanded ? "Show less" : "Show full declaration";
+        if (!expanded) toggle.scrollIntoView({ block: "nearest" });
+      });
+    });
+
+    const anchor = document.querySelector(".docs-article #parameters");
+    const heading = anchor?.matches("h2, h3") ? anchor : anchor?.parentElement.nextElementSibling;
+    const list = heading?.nextElementSibling;
+    if (list?.tagName === "UL") list.classList.add("parameter-list");
   }
 
   function setupOverview() {
@@ -465,5 +493,6 @@
   setupNavigation();
   setupProseCodeBlocks();
   setupCopyButtons();
+  setupDeclarations();
   setupOverview();
 })();
