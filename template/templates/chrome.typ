@@ -8,6 +8,8 @@
 
 #let package-version() = package-field("version")
 
+#let package-authors() = package-field("authors", fallback: ())
+
 #let package-description() = package-field("description", fallback: "Typst package documentation.")
 
 #let package-repository() = package-field("repository")
@@ -227,8 +229,8 @@
   ]
 }
 
-#let source-link(url) = if url != none {
-  html.elem("a", attrs: (class: "nav-button source-link", href: url))[Repository]
+#let source-link(url, label: "Repository") = if url != none {
+  html.elem("a", attrs: (class: "nav-button source-link", href: url))[#label]
 } else {
   none
 }

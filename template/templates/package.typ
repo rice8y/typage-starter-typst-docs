@@ -1,4 +1,4 @@
-#import "chrome.typ": api-modules, api-symbols, asset, breadcrumbs, code-block, docs-sidebar, footer, head, header, overview, package-description, package-entrypoint, package-license, package-name, package-repository, package-version, source-link, symbol-table
+#import "chrome.typ": api-modules, api-symbols, asset, breadcrumbs, code-block, docs-sidebar, footer, head, header, overview, package-authors, package-description, package-entrypoint, package-license, package-name, package-repository, package-version, source-link, symbol-table
 
 #let _fact(label, value) = if value != none {
   html.elem("div", attrs: (class: "fact"))[
@@ -25,6 +25,7 @@
   let modules = api-modules(symbols)
   let title = package-name()
   let description = package-description()
+  let authors = package-authors()
 
   if target() == "html" {
     html.elem("html", attrs: (lang: page.lang))[
@@ -88,9 +89,12 @@
               #html.elem("h2")[Package information]
               #html.elem("dl", attrs: (class: "facts"))[
                 #_fact("Version", package-version())
+                #_fact(if authors.len() == 1 { "Author" } else { "Authors" }, if authors.len() > 0 {
+                  html.elem("span", attrs: (class: "package-authors"))[#authors.join(", ")]
+                } else { none })
                 #_fact("License", package-license())
                 #_fact("Entrypoint", package-entrypoint())
-                #_fact("Repository", source-link(package-repository()))
+                #_fact("Repository", source-link(package-repository(), label: package-repository()))
               ]
             ]
           ]
