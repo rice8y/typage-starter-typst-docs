@@ -16,6 +16,7 @@
     let loadPromise;
     let renderedItems = [];
     let activeIndex = -1;
+    let searchRequest = 0;
 
     function setStatus(message) {
       status.textContent = message;
@@ -27,6 +28,7 @@
     }
 
     function closeResults() {
+      searchRequest += 1;
       results.hidden = true;
       input.setAttribute("aria-expanded", "false");
       input.removeAttribute("aria-activedescendant");
@@ -163,6 +165,7 @@
     }
 
     async function search() {
+      const request = ++searchRequest;
       const query = input.value.trim().toLowerCase();
       const terms = query.split(/\s+/).filter(Boolean);
       if (!terms.length) {
@@ -172,8 +175,9 @@
         return;
       }
 
-      if (!loadPromise) renderMessage("Searching...");
+      if (!loadPromise || root.dataset.state === "loading") renderMessage("Searching...");
       await loadIndex();
+      if (request !== searchRequest || document.activeElement !== input) return;
 
       if (root.dataset.state === "error") {
         renderMessage("Search is unavailable.");
@@ -233,8 +237,10 @@
 
     function setMotion(animate) {
       window.clearTimeout(motionTimer);
-      document.body.removeAttribute("data-nav-animate");
-      if (!animate || reducedMotion.matches) return;
+      if (!animate || reducedMotion.matches) {
+        document.body.removeAttribute("data-nav-animate");
+        return;
+      }
       document.body.dataset.navAnimate = "";
       nav.getBoundingClientRect();
       motionTimer = window.setTimeout(() => {
